@@ -614,9 +614,13 @@ sudo() {
 }
 export -f sudo
 
+set +e
 safe_sudo_find_delete "$TARGET_DIR" "*.log" "0" "f"
+rc=$?
+set -e
 # Reaching this line proves the disabled-oplog branch did not trip set -e.
-echo "SURVIVED_SET_E"
+echo "SURVIVED_SET_E (rc=$rc)"
+[[ "$rc" -eq 0 ]] || exit 1
 [[ -e "$TARGET_DIR/a.log" ]] && echo "A_SURVIVED" || echo "A_REMOVED"
 exit 0
 SCRIPT
